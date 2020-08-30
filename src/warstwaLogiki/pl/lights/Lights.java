@@ -1,6 +1,20 @@
 package warstwaLogiki.pl.lights;
+
+/**
+ *  Interfejs stworzony z mysla o swiatlach
+ *  @author Artur Madaj
+ *  @author Wojciech Sowa
+ */
 public interface Lights {
-    public void turnOn();
-    public void turnOff();
+
+    /**
+     * Metoda wlacza swiatla
+     */
+    void turnOn();
+
+    /**
+     * Metoda wylacza swiatla
+     */
+    void turnOff();
 
 }

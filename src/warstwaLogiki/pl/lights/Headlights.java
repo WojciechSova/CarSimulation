@@ -1,8 +1,20 @@
 package warstwaLogiki.pl.lights;
 
+/**
+ * Klasa odpowiada za obsluge swiatel drogowych
+ *  @author Artur Madaj
+ *  @author Wojciech Sowa
+ */
 public class Headlights extends LightingSystem implements Lights {
+
+    /**
+     * Domyslny konstruktor klasy
+     */
     public Headlights() {}
 
+    /**
+     * Metoda wlaczajaca swiatla - ustawia flage wlaczania swiatla w klasie nadrzednej na wartosc "true"
+     */
     @Override
     public void turnOn()
     {
@@ -13,6 +25,9 @@ public class Headlights extends LightingSystem implements Lights {
             System.out.println("Swiatła długie są już włączone.");
     }
 
+    /**
+     * Metoda wylaczajaca swiatla - ustawia flage wlaczania swiatla w klasie nadrzednej na wartosc "false"
+     */
     @Override
     public void turnOff()
     {
@@ -24,9 +39,18 @@ public class Headlights extends LightingSystem implements Lights {
             System.out.println("Swiatła długie nie są włączone");
     }
 
+    /**
+     * Metoda wypisuje inforamcje o rodzaju swiatla
+     * @return  Podpis swiatel
+     */
     public String toString()
     {
         return "Swiatła długie";
     }
+
+    /**
+     * Metoda zwraca stan dzialania swiatel (true/false)
+     * @return  Flaga wlaczania swiatla
+     */
     public boolean getIsOn() {return isOn;}
 }

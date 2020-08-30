@@ -4,20 +4,38 @@ import java.sql.*;
 import java.util.ArrayList;
 
 /**
- * Operacje na bazie danych
+ * Klasa odpowiada za operacje w bazie danych
+ *  @author Artur Madaj
+ *  @author Wojciech Sowa
  */
 public class OperateOnDataBase {
 
+    /**
+     * Zmienna przechowuje adres serwera bazy danych
+     */
     String dbURL = "jdbc:sqlserver://TWIERDZA\\ARTURROSERVER; databaseName = bazaUtworow";
+    /**
+     * Zmienna przechowuje nazwe uzytkownika
+     */
     String user = "proba";
+    /**
+     * Zmienna przechowuje haslo do konta w bazie danych
+     */
     String password = "proba1234";
+    /**
+     * Zmienna przechowuje obiekt sluzacy do laczenia sie z baza danych
+     */
     Connection con;
+    /**
+     * Zmienna przechowuje obiekt sluzacy do formulowania zapytan w bazie danych
+     */
     Statement statement;
-    ArrayList<Integer> listOfDeletedSongs = new ArrayList<>();
-    int maxIndex = 0;
+
 
     /**
-     * Zwrocenie lancucha znakowego z wszystkimi rekordami z bazy danych
+     * Metoda zwroca lancuch znakowy z wszystkimi rekordami z bazy danych
+     * @return Lancuch znakowy z wszystkimi rekordami z bazy danych
+     * @throws SQLException Wyjatek zostaje rzucony w przypadku braku mozliwosci polaczenia sie z baza danych
      */
     public String selectAll() throws SQLException {
         con = DriverManager.getConnection(dbURL, user, password);
@@ -37,17 +55,33 @@ public class OperateOnDataBase {
     }
 
     /**
-     * Zwrocenie lancucha znakowego z pojedynczym rekordem z bazy danych
+     * Metoda zapisuje wszystkie rekordy z bazy danych do listy piosenek z klasy ListOfSongs
+     * @param list  Obiekt klasy ListOfSongs
+     * @throws SQLException Wyjatek zostaje rzucony w przypadku braku mozliwosci polaczenia sie z baza danych
+     */
+    public void fromDBToListOfSongs(ListOfSongs list) throws SQLException {
+        con = DriverManager.getConnection(dbURL, user, password);
+        statement = con.createStatement();
+        ResultSet result = statement.executeQuery("SELECT * FROM piosenki");
+        while(result.next()){
+            list.addSong(result.getString(1).strip(), result.getString(2).strip(),
+                    result.getString(3).strip(), result.getTime(4), result.getInt(5));
+        }
+    }
+
+    /**
+     * Metoda zwroca lancuch znakowy z pojedynczym rekordem z bazy danych
+     * @param index  Numer unikalnego ID rekordu w bazie danych
+     * @return Landuch znakowy z pojedynczym rekordem z bazy danych
+     * @throws SQLException Wyjatek zostaje rzucony w przypadku braku mozliwosci polaczenia sie z baza danych
      */
     public String selectOne(int index) throws SQLException {
-        boolean operationDone = false;
         con = DriverManager.getConnection(dbURL, user, password);
         statement = con.createStatement();
         ResultSet result = statement.executeQuery("SELECT * FROM piosenki");
         StringBuilder tmp = new StringBuilder();
             while (result.next()) {
                 if (result.getString("id").equals(Integer.toString(index))) {
-                    operationDone = true;
                     for (int i = 1; i < 6; i++) {
                         if (i != 4)
                             tmp.append(result.getString(i).strip()).append(", ");
@@ -63,6 +97,12 @@ public class OperateOnDataBase {
         return tmp.toString();
     }
 
+    /**
+     * Metoda zwraca tytul piosenki, ktora posiada podane unikalne ID - index
+     * @param index  Unikalne ID dla piosenki znajdujacej sie w bazie danych
+     * @return Tytul piosenki
+     * @throws SQLException Wyjatek zostaje rzucony w przypadku braku mozliwosci polaczenia sie z baza danych
+     */
     public String getTitle(int index) throws SQLException {
         StringBuilder tmp = new StringBuilder();
         con = DriverManager.getConnection(dbURL, user, password);
@@ -73,10 +113,17 @@ public class OperateOnDataBase {
         return tmp.toString();
     }
 
+
     /**
-     * Wpisanie rekordu do bazy danych
+     * Metoda dodaje rekord do bazy danych
+     * @param title  Tytul piosenki
+     * @param artist  Artysta wykonujacy piosenke
+     * @param album  Album piosenki
+     * @param duration Dlugosc piosenki (format HH:MM:SS)
+     * @param index  Unikalne ID piosenki
+     * @throws SQLException Wyjatek zostaje rzucony w przypadku braku mozliwosci polaczenia sie z baza danych
      */
-    public void insert(String title, String performer, String album, String duration, int index) throws SQLException {
+    public void insert(String title, String artist, String album, String duration, int index) throws SQLException {
         con = DriverManager.getConnection(dbURL, user, password);
         statement = con.createStatement();
         ResultSet result = statement.executeQuery("SELECT * FROM piosenki");
@@ -87,24 +134,29 @@ public class OperateOnDataBase {
         }
         statement.executeUpdate("INSERT INTO piosenki VALUES(" +
                 "'" + title + "'," + " " +
-                "'" + performer + "'," + " " +
+                "'" + artist + "'," + " " +
                 "'" + album + "'," + " " +
                 "'" + duration + "'," + " " +
                 "'" + index + "'" + ")");
     }
 
+
     /**
-     * Usuniecie rekordu z bazy danych
+     * Metoda usuwa rekord z bazy danych o podanym ID
+     * @param id  Unikalne ID dla rekordu w bazie danych
+     * @throws SQLException Wyjatek zostaje rzucony w przypadku braku mozliwosci polaczenia sie z baza danych
      */
     public void delete(int id) throws SQLException {
         con = DriverManager.getConnection(dbURL, user, password);
         statement = con.createStatement();
         statement.executeUpdate("DELETE FROM piosenki WHERE id = " + "'" + id + "'");
-        listOfDeletedSongs.add(id);
     }
 
     /**
-     * Zaktualizowanie tytułu konkretnego utworu
+     * Metoda aktualizuje tytul piosenki, ktora posiada podany unikany ID
+     * @param id  Unikalne ID dla rekordu w bazie danych
+     * @param newTitle  Nowy tytul dla rekordu w bazie danych
+     * @throws SQLException Wyjatek zostaje rzucony w przypadku braku mozliwosci polaczenia sie z baza danych
      */
     public void updateTitle(int id, String newTitle) throws SQLException {
         con = DriverManager.getConnection(dbURL, user, password);
@@ -114,17 +166,23 @@ public class OperateOnDataBase {
     }
 
     /**
-     * Zaktualizowanie wykonawcy konkretnego utworu
+     * Metoda aktualizuje artyste piosenki, ktora posiada podany unikany ID
+     * @param id  Unikalne ID dla rekordu w bazie danych
+     * @param newArtist  Nowy artysta dla rekordu w bazie danych
+     * @throws SQLException Wyjatek zostaje rzucony w przypadku braku mozliwosci polaczenia sie z baza danych
      */
-    public void updatePerformer(int id, String newPerformer) throws SQLException {
+    public void updatePerformer(int id, String newArtist) throws SQLException {
         con = DriverManager.getConnection(dbURL, user, password);
         statement = con.createStatement();
-        statement.executeUpdate("UPDATE piosenki SET Wykonawca = " + "'" + newPerformer + "'" +
+        statement.executeUpdate("UPDATE piosenki SET Wykonawca = " + "'" + newArtist + "'" +
                 "WHERE id = " + "'" + id + "'");
     }
 
     /**
-     * Zaktualizowanie albumu konkretnego utworu
+     * Metoda aktualizuje album piosenki, ktora posiada podany unikany ID
+     * @param id  Unikalne ID dla rekordu w bazie danych
+     * @param newAlbum  Nowy album dla rekordu w bazie danych
+     * @throws SQLException Wyjatek zostaje rzucony w przypadku braku mozliwosci polaczenia sie z baza danych
      */
     public void updateAlbum(int id, String newAlbum) throws SQLException {
         con = DriverManager.getConnection(dbURL, user, password);
@@ -132,24 +190,4 @@ public class OperateOnDataBase {
         statement.executeUpdate("UPDATE piosenki SET Album = " + "'" + newAlbum + "'" +
                 "WHERE id = " + "'" + id + "'");
     }
-
-    public boolean notInDeletedSongs(int index) {
-        for (Integer i : listOfDeletedSongs) {
-            if (i == index)
-                return false;
-        }
-        return true;
-    }
-
-    public int countSongs() throws SQLException {
-        int amount = 0;
-        con = DriverManager.getConnection(dbURL, user, password);
-        statement = con.createStatement();
-        ResultSet result = statement.executeQuery("SELECT * FROM piosenki");
-        while(result.next()){
-            amount++;
-        }
-        return amount;
-    }
-
 }

@@ -1,8 +1,19 @@
 package warstwaLogiki.pl.lights;
 
+/**
+ * Klasa odpowiada za obsluge swiatel przeciwmgielnych
+ *  @author Artur Madaj
+ *  @author Wojciech Sowa
+ */
 public class FogLights extends LightingSystem implements Lights {
+    /**
+     * Domyslny konstruktor klasy
+     */
     public FogLights() {}
 
+    /**
+     * Metoda wlaczajaca swiatla - ustawia flage wlaczania swiatla w klasie nadrzednej na wartosc "true"
+     */
     @Override
     public void turnOn()
     {
@@ -13,6 +24,9 @@ public class FogLights extends LightingSystem implements Lights {
             System.out.println("Swiatła przeciwmgielne są już włączone.");
     }
 
+    /**
+     * Metoda wylaczajaca swiatla - ustawia flage wlaczania swiatla w klasie nadrzednej na wartosc "false"
+     */
     @Override
     public void turnOff()
     {
@@ -24,9 +38,18 @@ public class FogLights extends LightingSystem implements Lights {
             System.out.println("Swiatła przeciwmgielne nie są włączone");
     }
 
+    /**
+     * Metoda wypisuje inforamcje o rodzaju swiatla
+     * @return  Podpis swiatel
+     */
     public String toString()
     {
         return "Swiatła przeciwmgielne";
     }
+
+    /**
+     * Metoda zwraca stan dzialania swiatel (true/false)
+     * @return  Flaga wlaczania swiatla
+     */
     public boolean getIsOn() {return isOn;}
 }

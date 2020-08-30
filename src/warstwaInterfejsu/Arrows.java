@@ -1,3 +1,8 @@
 package warstwaInterfejsu;
 
-public enum Arrows{rightArrow, leftArrow};
+/**
+ * Enum do rysowania kierunkowskazu
+ *  @author Artur Madaj
+ *  @author Wojciech Sowa
+ */
+public enum Arrows{rightArrow, leftArrow}
